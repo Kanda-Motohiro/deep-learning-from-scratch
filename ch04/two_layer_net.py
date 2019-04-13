@@ -26,6 +26,20 @@ class TwoLayerNet:
         
         return y
         
+    def explain(self, x):
+        """デバッグのため、入力 x が各層を伝わっていく途中を返す。
+        returns input, hidden-layer1, sigmoid, hidden-layer2, output
+        """
+        W1, W2 = self.params['W1'], self.params['W2']
+        b1, b2 = self.params['b1'], self.params['b2']
+
+        a1 = np.dot(x, W1) + b1
+        z1 = sigmoid(a1)
+        a2 = np.dot(z1, W2) + b2
+        y = softmax(a2)
+
+        return x, a1, z1, a2, y
+
     # x:入力データ, t:教師データ
     def loss(self, x, t):
         y = self.predict(x)
