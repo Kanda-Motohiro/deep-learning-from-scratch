@@ -48,6 +48,10 @@ for i in range(iters_num):
         print("softmax=" + str(softmax))
     # for imgs
     
+print("W1")
+print(network.params["W1"])
+print("W2")
+print(network.params["W2"])
 plot(np.array(train_loss_list), "losses")
 plotNetwork(network, iters_num)
 sys.exit(0)
