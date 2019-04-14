@@ -73,11 +73,13 @@ def plotOneLayerNetwork(network, title):
     # W1[0]x + W1[1]y + b1 = 0 のグラフを引く。
     if title is not None:
         plt.title(title)
-    x = np.arange(0, 1, 0.1)
+    x = np.arange(0.0, 1.1, 0.1)
     b1 = network.params["b1"]
     W11 = network.params["W1"][0]
     W12 = network.params["W1"][1]
     y = (-b1 - W11 * x)/W12
     plt.plot(x, y)
     plt.grid(True)
+    #plt.xlim((0, 1))
+    #plt.ylim((0, 1))
     plt.show()

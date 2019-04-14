@@ -1,5 +1,5 @@
 # coding: utf-8
-# identity_one_layer.py by kanda.motohiro@gmail.com
+# andgate.py by kanda.motohiro@gmail.com
 # released under The MIT License.
 # based on ch04/train_neuralnet.py at
 # https://github.com/oreilly-japan/deep-learning-from-scratch.git
