@@ -22,7 +22,11 @@ class TwoLayerNet:
         a1 = np.dot(x, W1) + b1
         z1 = sigmoid(a1)
         a2 = np.dot(z1, W2) + b2
-        y = softmax(a2)
+        if not a2.size == 1:
+            y = softmax(a2)
+        else:
+            y = a2
+        #y = softmax(a2)
         
         return y
         
@@ -44,7 +48,8 @@ class TwoLayerNet:
     def loss(self, x, t):
         y = self.predict(x)
         
-        return cross_entropy_error(y, t)
+        #return cross_entropy_error(y, t)
+        return mean_squared_error(y, t)
     
     def accuracy(self, x, t):
         y = self.predict(x)
@@ -90,3 +95,10 @@ class TwoLayerNet:
         grads['b1'] = np.sum(da1, axis=0)
 
         return grads
+
+    def __repr__(self):
+        out = "W1\n" + str(self.params["W1"]) + "\n"
+        out += "b1\n" + str(self.params["b1"]) + "\n"
+        out += "W2\n" + str(self.params["W2"]) + "\n"
+        out += "b2\n" + str(self.params["b2"])
+        return out

@@ -4,11 +4,14 @@
 # based on ch04/train_neuralnet.py at
 # https://github.com/oreilly-japan/deep-learning-from-scratch.git
 import sys
+import os
+sys.path.append(os.pardir)
 import numpy as np
 from one_layer_net import OneLayerNet
+from ch04.two_layer_net import TwoLayerNet
 from util import *
 """
-AND 回路を学習する。１層のネットワーク。
+AND 回路を学習する。1/2 層のネットワーク。
 """
 iters_num = 100  # 繰り返しの回数を適宜設定する
 learning_rate = 0.1
@@ -34,13 +37,24 @@ def main():
     for title, outputs in (("AND", and_output), ("OR", or_output),
             ("NAND", nand_output), ("XOR", xor_output)):
         print(title)
-        train_gate(input, outputs, title)
+        if "--two" in sys.argv:
+            global iters_num
+            iters_num *= 10
+            train_gate(input, outputs, title, two=True)
+        else:
+            train_gate(input, outputs, title)
     sys.exit(0)
 
 
-def train_gate(inputs, outputs, title=""):
+def train_gate(inputs, outputs, title="", two=False):
     train_loss_list = []
-    network = OneLayerNet(input_size=2, output_size=1)
+    if two:
+        network = TwoLayerNet(input_size=2, hidden_size=2, output_size=1)
+        params = ('W1', 'b1', 'W2', 'b2')
+    else:
+        network = OneLayerNet(input_size=2, output_size=1)
+        params = ('W1', 'b1')
+
     print(network)
 
     for i in range(iters_num):
@@ -53,7 +67,7 @@ def train_gate(inputs, outputs, title=""):
             #print(grad)
 
             # パラメータの更新
-            for key in ('W1', 'b1'):
+            for key in params:
                 network.params[key] -= learning_rate * grad[key]
 
             # debug
@@ -79,7 +93,8 @@ def train_gate(inputs, outputs, title=""):
     print(title)
     print(network)
     plot(np.array(train_loss_list), title + ":losses")
-    plotOneLayerNetwork(network, title)
+    if not two:
+        plotOneLayerNetwork(network, title)
     return
 
 
