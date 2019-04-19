@@ -40,12 +40,11 @@ for i in range(iters_num):
         # 時々、表示する。
         if (i % 100) != 0:
             continue
-        input, a1, sigmoid, a2, softmax = network.explain(img)
+        input, a1, sigmoid, a2 = network.explain(img)
         print("input=" + str([round(x) for x in input]))
         print("a1=" + str(a1))
         print("sigmoid=" + str(sigmoid))
         print("a2=" + str(a2))
-        print("softmax=" + str(softmax))
     # for imgs
     
 print("W1")

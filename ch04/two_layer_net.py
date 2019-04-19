@@ -20,13 +20,12 @@ class TwoLayerNet:
         b1, b2 = self.params['b1'], self.params['b2']
     
         a1 = np.dot(x, W1) + b1
-        z1 = sigmoid(a1)
+        #z1 = sigmoid(a1)
+        z1 = relu(a1)
         a2 = np.dot(z1, W2) + b2
-        if not a2.size == 1:
-            y = softmax(a2)
-        else:
-            y = a2
+        # 本で扱っている問題は、分類。今、やりたいのは、回帰。
         #y = softmax(a2)
+        y = a2
         
         return y
         
@@ -38,11 +37,11 @@ class TwoLayerNet:
         b1, b2 = self.params['b1'], self.params['b2']
 
         a1 = np.dot(x, W1) + b1
-        z1 = sigmoid(a1)
+        #z1 = sigmoid(a1)
+        z1 = relu(a1)
         a2 = np.dot(z1, W2) + b2
-        y = softmax(a2)
 
-        return x, a1, z1, a2, y
+        return x, a1, z1, a2
 
     # x:入力データ, t:教師データ
     def loss(self, x, t):

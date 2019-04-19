@@ -23,15 +23,9 @@ class OneLayerNet:
         b1 = self.params['b1']
 
         a1 = np.dot(x, W1) + b1
-        #z1 = sigmoid(a1)
-        #a2 = np.dot(z1, W2) + b2
-        if not a1.size == 1:
-            y = softmax(a1)
-        else:
-            y = a1
-        # a1 が要素が一つだと、 softmax の結果は１にしかならないので、
-        # 学習できない。
+        # 本で扱っている問題は、分類。今、やりたいのは、回帰。なので、a1 を返す。
         #y = softmax(a1)
+        y = a1
         return y
 
     def explain(self, x):
@@ -42,18 +36,13 @@ class OneLayerNet:
         b1 = self.params['b1']
 
         a1 = np.dot(x, W1) + b1
-        if not a1.size == 1:
-            y = softmax(a1)
-        else:
-            y = a1
-        #y = softmax(a1)
-        return x, a1, y
+        return x, a1
 
     # x:入力データ, t:教師データ
     def loss(self, x, t):
         y = self.predict(x)
 
-        # loss=nan になる。なんでか知らん。
+        # これも、回帰だから、こっちを使う。
         #return cross_entropy_error(y, t)
         return mean_squared_error(y, t)
 

@@ -45,10 +45,9 @@ for i in range(iters_num):
         # 時々、表示する。
         if (i % 10) != 0:
             continue
-        input, a1, softmax = network.explain(img)
+        input, a1 = network.explain(img)
         print("input=" + str([round(x) for x in input]))
         print("a1=" + str(a1))
-        print("softmax=" + str(softmax))
     # for imgs
 
     # 勾配を表示する。

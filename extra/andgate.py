@@ -34,12 +34,13 @@ xor_output = np.array(([0.0, 1.0, 1.0, 0.0]))
 
 
 def main():
+    if "--two" in sys.argv:
+        global iters_num
+        iters_num *= 10
     for title, outputs in (("AND", and_output), ("OR", or_output),
             ("NAND", nand_output), ("XOR", xor_output)):
         print(title)
         if "--two" in sys.argv:
-            global iters_num
-            iters_num *= 10
             train_gate(input, outputs, title, two=True)
         else:
             train_gate(input, outputs, title)
