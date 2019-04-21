@@ -11,7 +11,7 @@ from one_layer_net import OneLayerNet
 from ch04.two_layer_net import TwoLayerNet
 from util import *
 """
-AND 回路を学習する。1/2 層のネットワーク。
+AND 回路を学習する。1, 2 層のネットワーク。
 """
 iters_num = 100  # 繰り返しの回数を適宜設定する
 learning_rate = 0.1
@@ -34,9 +34,13 @@ xor_output = np.array(([0.0, 1.0, 1.0, 0.0]))
 
 
 def main():
+    if "--xor" in sys.argv:
+        train_xor()
     if "--two" in sys.argv:
+        # 多めに学習が必要。
         global iters_num
         iters_num *= 10
+
     for title, outputs in (("AND", and_output), ("OR", or_output),
             ("NAND", nand_output), ("XOR", xor_output)):
         print(title)
@@ -44,6 +48,13 @@ def main():
             train_gate(input, outputs, title, two=True)
         else:
             train_gate(input, outputs, title)
+    sys.exit(0)
+
+
+def train_xor():
+    global iters_num
+    iters_num = 1000
+    train_gate(input, xor_output, "XOR", two=True)
     sys.exit(0)
 
 
@@ -56,6 +67,42 @@ def train_gate(inputs, outputs, title="", two=False):
         network = OneLayerNet(input_size=2, output_size=1)
         params = ('W1', 'b1')
 
+    """
+    # 正解を与えたのに、
+    network.params["W1"] = np.array(([[1.0, 1.0], [1.0,1.0]]))
+    network.params["b1"] = np.array(([0.0, -1.0]))
+    network.params["W2"] = np.array(([1.0, -2.0]))
+    network.params["b2"] = np.array(([0.0, 0.0]))
+    i=9999
+    input=[0.0, 0.0]
+    predict=0.6309963099630889
+    output=0.0
+    loss=0.3981563431870345
+    input=[1.0, 0.0]
+    predict=0.667896678966784
+    output=1.0
+    loss=0.11029261584129137
+    input=[0.0, 1.0]
+    predict=0.7011070110700929
+    output=1.0
+    loss=0.08933701883145358
+    input=[1.0, 1.0]
+    predict=2.3314683517128287e-15
+    output=0.0
+    loss=5.4357446750385345e-30
+    XOR
+    W1
+    [[0.72236183 0.81856003]
+     [0.74456521 1.03510148]]
+    b1
+    [-0.74550334 -2.20402852]
+    W2
+    [-0.97183806 -2.00364532]
+    b2
+    [0.70110701 0.70110701]
+    """
+
+    print("Initial weight and bias")
     print(network)
 
     for i in range(iters_num):
