@@ -53,7 +53,7 @@ def main():
 
 def train_xor():
     global iters_num
-    iters_num = 1000
+    iters_num = 10000
     train_gate(input, xor_output, "XOR", two=True)
     sys.exit(0)
 
