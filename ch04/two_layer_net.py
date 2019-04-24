@@ -15,6 +15,8 @@ class TwoLayerNet:
         self.params['W2'] = weight_init_std * np.random.randn(hidden_size, output_size)
         self.params['b2'] = np.zeros(output_size)
 
+        self.problem_type = "classification"
+
     def predict(self, x):
         W1, W2 = self.params['W1'], self.params['W2']
         b1, b2 = self.params['b1'], self.params['b2']
@@ -24,8 +26,10 @@ class TwoLayerNet:
         #z1 = relu(a1)
         a2 = np.dot(z1, W2) + b2
         # 本で扱っている問題は、分類。今、やりたいのは、回帰。
-        #y = softmax(a2)
-        y = a2
+        if self.problem_type == "classification":
+            y = softmax(a2)
+        else:
+            y = a2
         
         return y
         

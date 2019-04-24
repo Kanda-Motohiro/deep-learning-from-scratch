@@ -18,14 +18,18 @@ class OneLayerNet:
         self.params['W1'] = weight_init_std * np.random.randn(input_size, output_size)
         self.params['b1'] = np.zeros(output_size)
 
+        self.problem_type = "classification"
+
     def predict(self, x):
         W1 = self.params['W1']
         b1 = self.params['b1']
 
         a1 = np.dot(x, W1) + b1
-        # 本で扱っている問題は、分類。今、やりたいのは、回帰。なので、a1 を返す。
-        #y = softmax(a1)
-        y = a1
+        # 本で扱っている問題は、分類。今、やりたいのは、回帰。
+        if self.problem_type == "classification":
+            y = softmax(a1)
+        else:
+            y = a1
         return y
 
     def explain(self, x):

@@ -67,6 +67,7 @@ def train_gate(inputs, outputs, title="", two=False):
         network = OneLayerNet(input_size=2, output_size=1)
         params = ('W1', 'b1')
 
+    network.problem_type = "regression"
     """
     # 正解を与えたのに、
     network.params["W1"] = np.array(([[1.0, 1.0], [1.0,1.0]]))
