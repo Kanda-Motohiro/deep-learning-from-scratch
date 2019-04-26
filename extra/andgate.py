@@ -68,41 +68,6 @@ def train_gate(inputs, outputs, title="", two=False):
         params = ('W1', 'b1')
 
     network.problem_type = "regression"
-    """
-    # 正解を与えたのに、
-    network.params["W1"] = np.array(([[1.0, 1.0], [1.0,1.0]]))
-    network.params["b1"] = np.array(([0.0, -1.0]))
-    network.params["W2"] = np.array(([1.0, -2.0]))
-    network.params["b2"] = np.array(([0.0, 0.0]))
-    i=9999
-    input=[0.0, 0.0]
-    predict=0.6309963099630889
-    output=0.0
-    loss=0.3981563431870345
-    input=[1.0, 0.0]
-    predict=0.667896678966784
-    output=1.0
-    loss=0.11029261584129137
-    input=[0.0, 1.0]
-    predict=0.7011070110700929
-    output=1.0
-    loss=0.08933701883145358
-    input=[1.0, 1.0]
-    predict=2.3314683517128287e-15
-    output=0.0
-    loss=5.4357446750385345e-30
-    XOR
-    W1
-    [[0.72236183 0.81856003]
-     [0.74456521 1.03510148]]
-    b1
-    [-0.74550334 -2.20402852]
-    W2
-    [-0.97183806 -2.00364532]
-    b2
-    [0.70110701 0.70110701]
-    """
-
     print("Initial weight and bias")
     print(network)
 
@@ -134,9 +99,12 @@ def train_gate(inputs, outputs, title="", two=False):
             y = network.predict(input)
             # 見やすいように 1/0 で表示する。 
             print("input=" + str([round(x) for x in input]))
-            print("predict=" + str(y[0]))
+            print("predict=" + str(y))
             print("output=" + str(output))
             print("loss=" + str(loss))
+            if two:
+                x, a1, z1, a2 = network.explain(input)
+                print(x, a1, z1, a2)
         # for inputs
 
     print(title)
@@ -146,6 +114,23 @@ def train_gate(inputs, outputs, title="", two=False):
         plotOneLayerNetwork(network, title)
     return
 
+"""
+train_gate 先頭で、正解を与えたのに、ずれていくのはなぜ。
+
+        network.params["W1"] = np.array(([[1.0, 1.0], [1.0,1.0]]))
+        network.params["b1"] = np.array(([0.0, -1.0]))
+        network.params["W2"] = np.array(([1.0, -2.0]))
+        network.params["b2"] = np.array(([0.0]))
+
+input=[0.0, 0.0]
+predict=[-0.03207486]
+output=0.0
+loss=0.0005143984216133592
+[0.0001 0.0001] [ 0.00114779 -1.00129091] [0.50028695 0.26868769] [-0.03207486]
+input, W1*input+b1, sigmoid, W2*a2+b2, output と並んでいるわけだが、
+
+sigmoid をかけたことで、行列計算の結果と変わってしまったわけ。
+"""
 
 if __name__ == '__main__':
     main()

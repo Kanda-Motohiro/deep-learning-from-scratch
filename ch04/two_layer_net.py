@@ -51,8 +51,10 @@ class TwoLayerNet:
     def loss(self, x, t):
         y = self.predict(x)
         
-        #return cross_entropy_error(y, t)
-        return mean_squared_error(y, t)
+        if self.problem_type == "classification":
+            return cross_entropy_error(y, t)
+        else:
+            return mean_squared_error(y, t)
     
     def accuracy(self, x, t):
         y = self.predict(x)
@@ -85,7 +87,10 @@ class TwoLayerNet:
         a1 = np.dot(x, W1) + b1
         z1 = sigmoid(a1)
         a2 = np.dot(z1, W2) + b2
-        y = softmax(a2)
+        if self.problem_type == "classification":
+            y = softmax(a2)
+        else:
+            y = a2
         
         # backward
         dy = (y - t) / batch_num
