@@ -10,6 +10,7 @@ import numpy as np
 from one_layer_net import OneLayerNet
 from ch04.two_layer_net import TwoLayerNet
 from util import *
+from common.functions import sigmoid
 """
 AND 回路を学習する。1, 2 層のネットワーク。
 """
@@ -41,13 +42,12 @@ def main():
         global iters_num
         iters_num *= 10
 
-    for title, outputs in (("AND", and_output), ("OR", or_output),
+    for title, output in (("AND", and_output), ("OR", or_output),
             ("NAND", nand_output), ("XOR", xor_output)):
-        print(title)
         if "--two" in sys.argv:
-            train_gate(input, outputs, title, two=True)
+            train_gate(input, output, title, two=True)
         else:
-            train_gate(input, outputs, title)
+            train_gate(input, output, title)
     sys.exit(0)
 
 
@@ -58,7 +58,7 @@ def train_xor():
     sys.exit(0)
 
 
-def train_gate(inputs, outputs, title="", two=False):
+def train_gate(input, output, title="", two=False):
     train_loss_list = []
     if two:
         network = TwoLayerNet(input_size=2, hidden_size=2, output_size=2)
@@ -72,65 +72,39 @@ def train_gate(inputs, outputs, title="", two=False):
     print(network)
 
     for i in range(iters_num):
-        for j in range(4):
-            input = inputs[j]
-            output = outputs[j]
-            # 勾配の計算
-            grad = network.numerical_gradient(input, output)
-            #grad = network.gradient(x_batch, t_batch)
-            #print(grad)
+        # 勾配の計算
+        grad = network.numerical_gradient(input, output)
+        #grad = network.gradient(input, output)
+        #print(grad)
 
-            # パラメータの更新
-            for key in params:
-                network.params[key] -= learning_rate * grad[key]
+        # パラメータの更新
+        for key in params:
+            network.params[key] -= learning_rate * grad[key]
 
-            # debug
-            loss = network.loss(input, output)
-            train_loss_list.append(loss)
+        # debug
+        loss = network.loss(input, output)
+        train_loss_list.append(loss)
 
-            # 最初と最後に、表示する。
-            if i == 0 or i == (iters_num - 1):
-                pass
-            else:
-                continue
+        # 最初と最後に、表示する。
+        if i == 0 or i == (iters_num - 1):
+            pass
+        else:
+            continue
 
-            if j == 0:
-                print("i=%d" % i)
-            y = network.predict(input)
-            # 見やすいように 1/0 で表示する。 
-            print("input=" + str([round(x) for x in input]))
-            print("predict=" + str(y))
-            print("output=" + str(output))
-            print("loss=" + str(loss))
-            if two:
-                x, a1, z1, a2 = network.explain(input)
-                print(x, a1, z1, a2)
-        # for inputs
+        print("%s: i=%d" % (title, i))
+        print("loss=" + str(loss))
+        a1 = np.dot(input, network.params["W1"]) + network.params["b1"]
+        print("a1=\n" + str(a1))
+        if not two:
+            continue
+        a2 = np.dot(sigmoid(a1), network.params["W2"]) + network.params["b2"]
+        print("a2=\n" + str(a2))
 
-    print(title)
     print(network)
     plot(np.array(train_loss_list), title + ":losses")
     #if not two:
     #    plotOneLayerNetwork(network, title)
     return
-
-"""
-train_gate 先頭で、正解を与えたのに、ずれていくのはなぜ。
-
-        network.params["W1"] = np.array(([[1.0, 1.0], [1.0,1.0]]))
-        network.params["b1"] = np.array(([0.0, -1.0]))
-        network.params["W2"] = np.array(([1.0, -2.0]))
-        network.params["b2"] = np.array(([0.0]))
-
-input=[0.0, 0.0]
-predict=[-0.03207486]
-output=0.0
-loss=0.0005143984216133592
-[0.0001 0.0001] [ 0.00114779 -1.00129091] [0.50028695 0.26868769] [-0.03207486]
-input, W1*input+b1, sigmoid, W2*a2+b2, output と並んでいるわけだが、
-
-sigmoid をかけたことで、行列計算の結果と変わってしまったわけ。
-"""
 
 if __name__ == '__main__':
     main()
