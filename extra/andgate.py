@@ -21,16 +21,16 @@ h = 1e-4 # 0.0001
 input = np.array(([h, h], [1.0, h], [h, 1.0], [1.0, 1.0]))
 
 # AND(0, 0) is 0
-and_output = np.array(([0.0, 0.0, 0.0, 1.0]))
+and_output = np.array(([[1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [0.0, 1.0]]))
 
 # OR(0, 0) is 0
-or_output = np.array(([0.0, 1.0, 1.0, 1.0]))
+or_output = np.array(([[1.0, 0.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]))
 
 # NAND(0, 0) is 1
-nand_output = np.array(([1.0, 1.0, 1.0, 0.0]))
+nand_output = np.array(([[0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [1.0, 0.0]]))
 
 # XOR(0, 0) is 0
-xor_output = np.array(([0.0, 1.0, 1.0, 0.0]))
+xor_output = np.array(([[1.0, 0.0], [0.0, 1.0], [0.0, 1.0], [1.0, 0.0]]))
 
 
 def main():
@@ -61,10 +61,10 @@ def train_xor():
 def train_gate(inputs, outputs, title="", two=False):
     train_loss_list = []
     if two:
-        network = TwoLayerNet(input_size=2, hidden_size=2, output_size=1)
+        network = TwoLayerNet(input_size=2, hidden_size=2, output_size=2)
         params = ('W1', 'b1', 'W2', 'b2')
     else:
-        network = OneLayerNet(input_size=2, output_size=1)
+        network = OneLayerNet(input_size=2, output_size=2)
         params = ('W1', 'b1')
 
     network.problem_type = "regression"
@@ -110,8 +110,8 @@ def train_gate(inputs, outputs, title="", two=False):
     print(title)
     print(network)
     plot(np.array(train_loss_list), title + ":losses")
-    if not two:
-        plotOneLayerNetwork(network, title)
+    #if not two:
+    #    plotOneLayerNetwork(network, title)
     return
 
 """
