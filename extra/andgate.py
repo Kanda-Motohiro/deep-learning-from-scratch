@@ -45,7 +45,7 @@ def main():
     for title, output in (("AND", and_output), ("OR", or_output),
             ("NAND", nand_output), ("XOR", xor_output)):
         if "--two" in sys.argv:
-            train_gate(input, output, title, two=True)
+            train_gate(input, output, title, mode="two")
         else:
             train_gate(input, output, title)
     sys.exit(0)
@@ -54,32 +54,43 @@ def main():
 def train_xor():
     global iters_num
     iters_num = 10000
-    train_gate(input, xor_output, "XOR", two=True)
+    while True:
+        ok = train_gate(input, xor_output, "XOR", mode="xor")
+        if ok:
+            break
     sys.exit(0)
 
 
-def train_gate(input, output, title="", two=False):
+def train_gate(input, output, title="", mode="one"):
     train_loss_list = []
-    if two:
-        network = TwoLayerNet(input_size=2, hidden_size=2, output_size=2)
-        params = ('W1', 'b1', 'W2', 'b2')
-    else:
+    if mode == "one":
         network = OneLayerNet(input_size=2, output_size=2)
         params = ('W1', 'b1')
+    else:
+        network = TwoLayerNet(input_size=2, hidden_size=2, output_size=2)
+        params = ('W1', 'b1', 'W2', 'b2')
 
     network.problem_type = "regression"
     print("Initial weight and bias")
     print(network)
 
     for i in range(iters_num):
-        # 勾配の計算
-        grad = network.numerical_gradient(input, output)
-        #grad = network.gradient(input, output)
-        #print(grad)
+        if mode != "xor":
+            # 勾配の計算
+            grad = network.numerical_gradient(input, output)
+            #grad = network.gradient(input, output)
+            #print(grad)
 
-        # パラメータの更新
-        for key in params:
-            network.params[key] -= learning_rate * grad[key]
+            # パラメータの更新
+            for key in params:
+                network.params[key] -= learning_rate * grad[key]
+        else:
+            # なんでかわからんが、 xor の学習は、１つづつ勾配を
+            # 計算して反映しないと、うまくいかない。
+            for x, y in zip(input, output):
+                grad = network.numerical_gradient(x, y)
+                for key in params:
+                    network.params[key] -= learning_rate * grad[key]
 
         # debug
         loss = network.loss(input, output)
@@ -95,16 +106,19 @@ def train_gate(input, output, title="", two=False):
         print("loss=" + str(loss))
         a1 = np.dot(input, network.params["W1"]) + network.params["b1"]
         print("a1=\n" + str(a1))
-        if not two:
+        if mode == "one":
             continue
         a2 = np.dot(sigmoid(a1), network.params["W2"]) + network.params["b2"]
         print("a2=\n" + str(a2))
+
+    if mode == "xor" and loss > 0.5:
+        return False
 
     print(network)
     plot(np.array(train_loss_list), title + ":losses")
     #if not two:
     #    plotOneLayerNetwork(network, title)
-    return
+    return True
 
 if __name__ == '__main__':
     main()
