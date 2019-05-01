@@ -4,6 +4,8 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 from common.functions import *
 from common.gradient import numerical_gradient
 
+# sigmoid or relu
+use_sigmoid = True
 
 class TwoLayerNet:
 
@@ -22,8 +24,10 @@ class TwoLayerNet:
         b1, b2 = self.params['b1'], self.params['b2']
     
         a1 = np.dot(x, W1) + b1
-        z1 = sigmoid(a1)
-        #z1 = relu(a1)
+        if use_sigmoid:
+            z1 = sigmoid(a1)
+        else:
+            z1 = relu(a1)
         a2 = np.dot(z1, W2) + b2
         # 本で扱っている問題は、分類。今、やりたいのは、回帰。
         if self.problem_type == "classification":
@@ -41,8 +45,10 @@ class TwoLayerNet:
         b1, b2 = self.params['b1'], self.params['b2']
 
         a1 = np.dot(x, W1) + b1
-        z1 = sigmoid(a1)
-        #z1 = relu(a1)
+        if use_sigmoid:
+            z1 = sigmoid(a1)
+        else:
+            z1 = relu(a1)
         a2 = np.dot(z1, W2) + b2
 
         return x, a1, z1, a2
@@ -85,7 +91,10 @@ class TwoLayerNet:
         
         # forward
         a1 = np.dot(x, W1) + b1
-        z1 = sigmoid(a1)
+        if use_sigmoid:
+            z1 = sigmoid(a1)
+        else:
+            z1 = relu(a1)
         a2 = np.dot(z1, W2) + b2
         if self.problem_type == "classification":
             y = softmax(a2)
@@ -98,7 +107,10 @@ class TwoLayerNet:
         grads['b2'] = np.sum(dy, axis=0)
         
         dz1 = np.dot(dy, W2.T)
-        da1 = sigmoid_grad(a1) * dz1
+        if use_sigmoid:
+            da1 = sigmoid_grad(a1) * dz1
+        else:
+            da1 = relu_grad(a1) * dz1
         grads['W1'] = np.dot(x.T, da1)
         grads['b1'] = np.sum(da1, axis=0)
 

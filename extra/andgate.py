@@ -9,8 +9,9 @@ sys.path.append(os.pardir)
 import numpy as np
 from one_layer_net import OneLayerNet
 from ch04.two_layer_net import TwoLayerNet
+import ch04.two_layer_net
 from util import *
-from common.functions import sigmoid
+from common.functions import sigmoid, relu
 """
 AND 回路を学習する。1, 2 層のネットワーク。
 """
@@ -114,7 +115,11 @@ def train_gate(input, output, title="", mode="one"):
         print("a1=\n" + str(a1))
         if mode == "one":
             continue
-        a2 = np.dot(sigmoid(a1), network.params["W2"]) + network.params["b2"]
+        if ch04.two_layer_net.use_sigmoid:
+            z1 = sigmoid(a1)
+        else:
+            z1 = relu(a1)
+        a2 = np.dot(z1, network.params["W2"]) + network.params["b2"]
         print("a2=\n" + str(a2))
 
     # いい結果が出ないときはやり直そう。
