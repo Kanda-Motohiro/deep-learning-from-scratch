@@ -17,6 +17,9 @@ AND 回路を学習する。1, 2 層のネットワーク。
 iters_num = 100  # 繰り返しの回数を適宜設定する
 learning_rate = 0.1
 
+# 00/01/10/11 という真理値表の４つを、まとめて勾配を計算する。
+batch_truth_table = False
+
 # ゼロだと、掛け算してもゼロなので良くないのでないか。
 h = 1e-4 # 0.0001
 input = np.array(([h, h], [1.0, h], [h, 1.0], [1.0, 1.0]))
@@ -75,7 +78,7 @@ def train_gate(input, output, title="", mode="one"):
     print(network)
 
     for i in range(iters_num):
-        if mode != "xor":
+        if batch_truth_table and mode != "xor":
             # 勾配の計算
             grad = network.numerical_gradient(input, output)
             #grad = network.gradient(input, output)
@@ -84,6 +87,10 @@ def train_gate(input, output, title="", mode="one"):
             # パラメータの更新
             for key in params:
                 network.params[key] -= learning_rate * grad[key]
+
+            # debug
+            loss = network.loss(input, output)
+            train_loss_list.append(loss)
         else:
             # なんでかわからんが、 xor の学習は、１つづつ勾配を
             # 計算して反映しないと、うまくいかない。
@@ -92,9 +99,8 @@ def train_gate(input, output, title="", mode="one"):
                 for key in params:
                     network.params[key] -= learning_rate * grad[key]
 
-        # debug
-        loss = network.loss(input, output)
-        train_loss_list.append(loss)
+                loss = network.loss(x, y)
+                train_loss_list.append(loss)
 
         # 最初と最後に、表示する。
         if i == 0 or i == (iters_num - 1):
@@ -111,13 +117,12 @@ def train_gate(input, output, title="", mode="one"):
         a2 = np.dot(sigmoid(a1), network.params["W2"]) + network.params["b2"]
         print("a2=\n" + str(a2))
 
+    # いい結果が出ないときはやり直そう。
     if mode == "xor" and loss > 0.5:
         return False
 
     print(network)
     plot(np.array(train_loss_list), title + ":losses")
-    #if not two:
-    #    plotOneLayerNetwork(network, title)
     return True
 
 if __name__ == '__main__':
