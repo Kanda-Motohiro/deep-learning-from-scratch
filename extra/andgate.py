@@ -21,6 +21,13 @@ learning_rate = 0.1
 # 00/01/10/11 という真理値表の４つを、まとめて勾配を計算する。
 batch_truth_table = False
 
+# Xavier initialization
+use_xavier_initialization = True
+if use_xavier_initialization:
+    weight_init_std = 1/np.sqrt(2)
+else:
+    weight_init_std = 0.01  # default of TwoLayerNet
+
 # ゼロだと、掛け算してもゼロなので良くないのでないか。
 h = 1e-4 # 0.0001
 input = np.array(([h, h], [1.0, h], [h, 1.0], [1.0, 1.0]))
@@ -57,7 +64,7 @@ def main():
 
 def train_xor():
     global iters_num
-    iters_num = 10000
+    iters_num = 1000
     while True:
         ok = train_gate(input, xor_output, "XOR", mode="xor")
         if ok:
@@ -68,10 +75,10 @@ def train_xor():
 def train_gate(input, output, title="", mode="one"):
     train_loss_list = []
     if mode == "one":
-        network = OneLayerNet(input_size=2, output_size=2)
+        network = OneLayerNet(input_size=2, output_size=2, weight_init_std=weight_init_std)
         params = ('W1', 'b1')
     else:
-        network = TwoLayerNet(input_size=2, hidden_size=2, output_size=2)
+        network = TwoLayerNet(input_size=2, hidden_size=2, output_size=2, weight_init_std=weight_init_std)
         params = ('W1', 'b1', 'W2', 'b2')
 
     network.problem_type = "regression"
@@ -123,7 +130,7 @@ def train_gate(input, output, title="", mode="one"):
         print("a2=\n" + str(a2))
 
     # いい結果が出ないときはやり直そう。
-    if mode == "xor" and loss > 0.5:
+    if mode == "xor" and loss > 0.1:
         return False
 
     print(network)
