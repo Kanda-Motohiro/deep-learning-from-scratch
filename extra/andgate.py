@@ -18,9 +18,6 @@ AND 回路を学習する。1, 2 層のネットワーク。
 iters_num = 100  # 繰り返しの回数を適宜設定する
 learning_rate = 0.1
 
-# 00/01/10/11 という真理値表の４つを、まとめて勾配を計算する。
-batch_truth_table = False
-
 # Xavier initialization
 use_xavier_initialization = True
 if use_xavier_initialization:
@@ -86,29 +83,24 @@ def train_gate(input, output, title="", mode="one"):
     print(network)
 
     for i in range(iters_num):
-        if batch_truth_table and mode != "xor":
+        for x, y in zip(input, output):
             # 勾配の計算
-            grad = network.numerical_gradient(input, output)
-            #grad = network.gradient(input, output)
-            #print(grad)
+            if mode == "one":
+                grad = network.numerical_gradient(x, y)
+            else:
+                # gradient のコードは、入力が、バッチであることを前提と
+                # している。vstack を使って、同じものをバッチにする。
+                # 数は、なんでもいいのだが、 2 だと層の数と同じでまぎらわしい
+                # ので、 3 にする。
+                grad = network.gradient(np.vstack((x, x, x)), np.vstack((y, y, y)))
 
             # パラメータの更新
             for key in params:
                 network.params[key] -= learning_rate * grad[key]
 
             # debug
-            loss = network.loss(input, output)
+            loss = network.loss(x, y)
             train_loss_list.append(loss)
-        else:
-            # なんでかわからんが、 xor の学習は、１つづつ勾配を
-            # 計算して反映しないと、うまくいかない。
-            for x, y in zip(input, output):
-                grad = network.numerical_gradient(x, y)
-                for key in params:
-                    network.params[key] -= learning_rate * grad[key]
-
-                loss = network.loss(x, y)
-                train_loss_list.append(loss)
 
         # 最初と最後に、表示する。
         if i == 0 or i == (iters_num - 1):
