@@ -17,7 +17,7 @@ learning_rate = 0.1
 
 h = 1e-4 # 0.0001
 input = np.array(([h, h], [1.0, h], [h, 1.0], [1.0, 1.0]), dtype=np.float32)
-xor_output = np.array(([[1.0, 0.0], [0.0, 1.0], [0.0, 1.0], [1.0, 0.0]]), dtype=np.float32)
+xor_output = np.array(([[1.0, h], [h, 1.0], [h, 1.0], [1.0, h]]), dtype=np.float32)
 
 
 def print_network(L1, L2):
@@ -46,7 +46,10 @@ def predict(x, L1, L2):
 
 def main():
     L1 = torch.nn.Linear(2, 2)
+    # andgate.py に合わせて、バイアスはゼロにしよう。
+    L1.bias.data = torch.zeros(2)
     L2 = torch.nn.Linear(2, 2)
+    L2.bias.data = torch.zeros(2)
     model = torch.nn.Sequential(L1, torch.nn.Sigmoid(), L2)
     # 二乗平均誤差
     loss_fn = torch.nn.MSELoss()
@@ -60,14 +63,12 @@ def main():
 
     for i in range(iters_num):
         for in0, out0 in zip(input, xor_output):
-            x = torch.from_numpy(in0)
-            # batch にしないといけないそうな。
-            x.unsqueeze(0)
+            x = torch.from_numpy(in0)            
             y = torch.from_numpy(out0)
-            y.unsqueeze(0)
-
-            y_pred = model(x)
-            loss = loss_fn(y_pred, y)
+            
+            # batch にしないといけないそうな。
+            y_pred = model(x.unsqueeze(0))
+            loss = loss_fn(y_pred, y.unsqueeze(0))
 
             model.zero_grad()
             loss.backward()
@@ -78,22 +79,15 @@ def main():
             # debug
             train_loss_list.append(loss.item())
 
-        #print("L1 weight grad")
-        #print(L1.weight.grad.data)
-        #print("L2 weight grad")
-        #print(L2.weight.grad.data)
-
         # 最初と最後に、表示する。
         if i == 0 or i == (iters_num - 1) or (i % 100) == 0:
             print("i=%d" % i)
             out = predict(input, L1, L2)
-            print("pred=" + str(out))
-            X = torch.from_numpy(out)
-            X.unsqueeze(0)
-            Y = torch.from_numpy(xor_output)
-            Y.unsqueeze(0)
-            Loss = loss_fn(X, Y)
-            print("loss=%f" % Loss.item())
+            y_pred = model(torch.from_numpy(input).unsqueeze(0))
+            print("pred=" + str(out) + str(y_pred))
+            loss = loss_fn(torch.from_numpy(out).unsqueeze(0),
+                torch.from_numpy(xor_output).unsqueeze(0))
+            print("loss=%f" % loss.item())
     # for iter
 
     print_network(L1, L2)
