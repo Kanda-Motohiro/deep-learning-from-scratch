@@ -15,6 +15,7 @@ AND, OR, NAND, XOR 回路を学習する、 pytorch を使った二層のネッ�
 """
 iters_num = 100
 
+
 def print_network(L1, L2):
     print("L1 weight")
     print(L1.weight.data)
@@ -48,7 +49,7 @@ def train_gate(input, output, title=""):
     # 二乗平均誤差
     loss_fn = torch.nn.MSELoss()
 
-    # 一番普通の勾配降下法
+    # SGD の時は全然、学習しなかったのだが、 Adam にしたら良くなった。
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     train_loss_list = []
@@ -57,9 +58,9 @@ def train_gate(input, output, title=""):
 
     for i in range(iters_num):
         for in0, out0 in zip(input, output):
-            x = torch.from_numpy(in0)            
+            x = torch.from_numpy(in0)
             y = torch.from_numpy(out0)
-            
+
             # batch にしないといけないそうな。
             y_pred = model(x.unsqueeze(0))
             loss = loss_fn(y_pred, y.unsqueeze(0))
@@ -86,7 +87,7 @@ def train_gate(input, output, title=""):
         loss = loss_fn(y_pred,
             torch.from_numpy(output).unsqueeze(0))
         print("loss=%f" % loss.item())
-        print("pred=" +  str(y_pred))
+        print("pred=" + str(y_pred))
     # for iter
 
     print_network(L1, L2)
