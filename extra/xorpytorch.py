@@ -13,7 +13,7 @@ from andgate import learning_rate, input, and_output, or_output, nand_output, xo
 """
 AND, OR, NAND, XOR 回路を学習する、 pytorch を使った二層のネットワーク。
 """
-iters_num = 1000
+iters_num = 100
 
 def print_network(L1, L2):
     print("L1 weight")
@@ -49,7 +49,7 @@ def train_gate(input, output, title=""):
     loss_fn = torch.nn.MSELoss()
 
     # 一番普通の勾配降下法
-    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     train_loss_list = []
     print("Initial weight and bias")
