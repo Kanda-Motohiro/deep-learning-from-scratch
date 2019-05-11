@@ -13,7 +13,7 @@ import ch04.two_layer_net
 from util import *
 from common.functions import sigmoid, relu
 """
-AND 回路を学習する。1, 2 層のネットワーク。
+AND, OR, NAND, XOR 回路を学習する。1, 2 層のネットワーク。
 """
 iters_num = 100  # 繰り返しの回数を適宜設定する
 learning_rate = 0.1
@@ -27,19 +27,21 @@ else:
 
 # ゼロだと、掛け算してもゼロなので良くないのでないか。
 h = 1e-4 # 0.0001
-input = np.array(([h, h], [1.0, h], [h, 1.0], [1.0, 1.0]))
+
+# pytorch で、 Tensor にするときにエラーになるので、 float32 を使う。
+input = np.array(([h, h], [1.0, h], [h, 1.0], [1.0, 1.0]), dtype=np.float32)
 
 # AND(0, 0) is 0
-and_output = np.array(([[1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [0.0, 1.0]]))
+and_output = np.array(([[1.0, 0.0], [1.0, 0.0], [1.0, 0.0], [0.0, 1.0]]), dtype=np.float32)
 
 # OR(0, 0) is 0
-or_output = np.array(([[1.0, 0.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]))
+or_output = np.array(([[1.0, 0.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]), dtype=np.float32)
 
 # NAND(0, 0) is 1
-nand_output = np.array(([[0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [1.0, 0.0]]))
+nand_output = np.array(([[0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [1.0, 0.0]]), dtype=np.float32)
 
 # XOR(0, 0) is 0
-xor_output = np.array(([[1.0, 0.0], [0.0, 1.0], [0.0, 1.0], [1.0, 0.0]]))
+xor_output = np.array(([[1.0, 0.0], [0.0, 1.0], [0.0, 1.0], [1.0, 0.0]]), dtype=np.float32)
 
 
 def main():
