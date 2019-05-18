@@ -1,8 +1,12 @@
 Deep Learning from scratch extra code
 ======================================
 
-Wrote AND gate training code using one layer network.
-Wrote Identity matrix training code using one and two layer network.
+- Simple AND/OR/NAND/XOR gate training code using one/two layer network.
 
-１層のネットワークで、 AND ゲートを学習するコードを書いた。
-１層および２層のネットワークで、 単位行列を学習するコードを書いた。
+- Same with TensorFlow and PyTorch framework.
+
+- Identity matrix training code using one/two layer network.
+
+- １層および２層のネットワークで、AND/OR/NAND/XOR ゲートを学習するコード
+
+- 単位行列を学習するコード

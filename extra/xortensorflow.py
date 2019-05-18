@@ -30,7 +30,7 @@ def main():
     model.compile(optimizer='adam', loss="mean_squared_error")
 
     # 学習。
-    history = model.fit(input, xor_output, verbose=0, epochs=1000)
+    history = model.fit(input, xor_output, verbose=0, epochs=10000)
 
     # 重みを見る。
     print_network(L1, L2)
